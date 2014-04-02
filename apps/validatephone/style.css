@@ -1,0 +1,85 @@
+
+
+.validatephone-reason{
+	background: #FFF9B2;
+	width: 385px;
+	min-height: 70px;
+	padding: 15px 0px 0 0px;
+	color: #666;
+	display: block;
+	text-align: center;
+	margin-bottom: 10px;
+
+}
+
+.validatephone-reason ul{
+	font-weight: 300;
+	font-size: 19px;
+	list-style: none;
+}
+
+.validatephone-reason ul li{
+	line-height:35px;
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.validatephone-reason ul li:last-child{
+	padding-right: 0px;
+}
+
+.validatephone-reason label, input[type="radio"] {
+  vertical-align: middle;
+}
+
+.validatephone-reason p{
+	font-size: 13px;
+	font-weight: 300;
+	margin-bottom: 0;
+}
+.validatephone-label, .validatephone-reason-label {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #f47820;
+	font-size: 13px;
+	display: block;
+	line-height: 18px;
+	padding: 5px;
+	position: relative;
+	top: -24px;
+	color: #FFF;
+	width: 50px;
+	cursor: pointer;
+	text-align: center;
+}
+.validatephone-reason-label  {
+	width: 130px
+}
+
+
+/*--- Este telefone está correto?---*/
+
+ul.validatephone-phone {
+	font-weight: 300;
+	font-size: 19px;
+	list-style: none;
+	clear: both;
+}
+
+ul.validatephone-phone  li{
+	display: inline-block;
+}
+
+ul.validatephone-phone  li:last-child{
+	padding-right: 0px;
+}
+
+
+/*--- Obrigado----*/
+
+p.validatephone-thanks{
+	padding-top: 10px;
+	font-size: 18px;
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"name": "apontador-app",
+  "version": "0.0.4",
+	"description": "Test app to apontador in local machine",
+	"private": true,
+	"author": {
+		"name": "Eder Eduardo",
+		"email": "eder.esilva@gmail.com"
+	},
+	"dependencies": {
+		"express": "~3.4.8"
+	}
+}
