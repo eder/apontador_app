@@ -2,7 +2,10 @@
 
 'use strict';
 /**
- * Serves static pages with the app/css from the apps.
+ * Serves static pages with the app/css from the localapps.
+ * It takes a few cli arguments to configure it well.
+ *
+ * --webpage : the webpage which will get the full
  */
 
 var http = require('http');
@@ -11,54 +14,64 @@ var request = require('request');
 var args = process.argv.slice(2);
 var path = require('path');
 
-
 var app = express(),
-    basePath = '',
+    webpageUrl = '',
     staticDir = '';
 
 /**
- * Configure server settings based on cli args.
+ * Configures server settings based on cli args.
  */
 if (args.length) {
     args.forEach(function (arg) {
-        var flag = arg.split('=')[0];
+        var thisArg = arg.split('=');
+        var flag = thisArg[0];
 
         switch (flag) {
-        case '--local':
-
+        case '--webpage':
+            webpageUrl = thisArg[1];
             break;
-        case '--static-dir'
-
+        case '--dir':
+            staticDir = thisArg[1];
             break;
         default:
-
-            break;
+            console.log("Invalid arg");
+            process.exit(1);
         }
     });
+} else {
+    console.error("Error: no args specified.");
+    console.log("Specify a webpage (--webpage=WEBPAGE) and a static dir " +
+                "(--dir=DIRECTORY) to proceed.");
+    process.exit(1);
 }
 
 
+/**
+ * Express specific stuff
+ */
 app.set('port', process.env.PORT || 3000);
 app.use(express.logger('dev'));
 app.use(app.router);
-app.use(express.static(path.join(__dirname, staticDir)));
+app.use(express.static(staticDir));
 
+/**
+ * Routing functions
+ */
 app.get('/', function (req, res) {
-    getPoiBody(req.query.poi);
-    res.send(html + generatesSources(req.query.app));
+    request(webpageUrl, function (err, resp, body) {
+        if (!err && resp.statusCode === 200) {
+            res.send(body + "<script>alert('lol');</script>");
+        }
+    })
 });
 
-var getPoiBody = function (poi) {
-    request('http://www.apontador.com.br/' + poi + '', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            return body;
-        }
-    });
-};
 
 var generatesSources = function (path) {
-    var css = '<link href="' + path + '/style.css" media="screen" rel="stylesheet" type="text/css">\n';
-    var js = '<script src="' + path + '/app.js" type="text/javascript"></script>';
+    var css = '<link href="' + path +
+        '/style.css" media="screen" rel="stylesheet" type="text/css">\n';
+    var js = '<script src="' + path +
+        '/app.js" type="text/javascript"></script>';
+    return '';
     return css + js;
 };
 
