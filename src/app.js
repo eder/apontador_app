@@ -13,6 +13,7 @@ var express = require('express');
 var request = require('request');
 var args = process.argv.slice(2);
 var path = require('path');
+var myUtils = require('./util');
 
 var app = express(),
     webpageUrl = '',
@@ -31,7 +32,8 @@ if (args.length) {
             webpageUrl = thisArg[1];
             break;
         case '--dir':
-            staticDir = thisArg[1];
+            staticDir = path.resolve(thisArg[1]);
+            console.log(staticDir);
             break;
         default:
             console.log("Invalid arg");
@@ -51,6 +53,7 @@ if (args.length) {
  */
 app.set('port', process.env.PORT || 3000);
 app.use(express.logger('dev'));
+app.use(express.compress());
 app.use(app.router);
 app.use(express.static(staticDir));
 
@@ -58,22 +61,14 @@ app.use(express.static(staticDir));
  * Routing functions
  */
 app.get('/', function (req, res) {
+    console.log("Proxying " + webpageUrl);
     request(webpageUrl, function (err, resp, body) {
         if (!err && resp.statusCode === 200) {
-            res.send(body + "<script>alert('lol');</script>");
+            res.send(body + myUtils.genLoadScript('app.js', 'style.css'));
         }
-    })
+    });
 });
 
-
-var generatesSources = function (path) {
-    var css = '<link href="' + path +
-        '/style.css" media="screen" rel="stylesheet" type="text/css">\n';
-    var js = '<script src="' + path +
-        '/app.js" type="text/javascript"></script>';
-    return '';
-    return css + js;
-};
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
