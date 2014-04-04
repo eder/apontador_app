@@ -2,6 +2,8 @@
 
 > Naively injects stuff
 
+> ps.: in heavy dev yet
+
 ![Imgur](http://i.imgur.com/6fUHVC3.png)
 
 ## Usage
@@ -23,6 +25,9 @@ Here comes a great quote from the link above:
 As we, from the frontend team, didn't wan't to keep injecting code into devtools and them repeting this, we've then developed this.
 
 By utilizing this little hack we are able to use some debugging and fast debugging cool stuff provided by devtools like Workspaces w/ mapping (both js and css) which is extremely great.
+
+For more on how this improves debugging/refactoring, see [this](http://www.html5rocks.com/en/tutorials/developertools/revolutions2013) article on the new dev tools powers and particularly [this](http://www.html5rocks.com/en/tutorials/developertools/revolutions2013/#toc-adding-workspace) part of it.
+
 
 ## Piping to multiple browsers
 

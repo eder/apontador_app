@@ -88,6 +88,8 @@ server = http.createServer(app).listen(app.get('port'), function () {
  * Socket.io
  */
 
+// TODO
+
 if (useSocket) {
     io.listen(server);
 }
