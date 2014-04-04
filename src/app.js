@@ -11,13 +11,17 @@
 var http = require('http');
 var express = require('express');
 var request = require('request');
+var io = require('socket.io');
 var args = process.argv.slice(2);
 var path = require('path');
 var myUtils = require('./util');
 
 var app = express(),
+    server,
     webpageUrl = '',
-    staticDir = '';
+    staticDir = '',
+    useSocket = false;
+
 
 /**
  * Configures server settings based on cli args.
@@ -31,10 +35,16 @@ if (args.length) {
         case '--webpage':
             webpageUrl = thisArg[1];
             break;
+
         case '--dir':
             staticDir = path.resolve(thisArg[1]);
             console.log(staticDir);
             break;
+
+        case '--pipe':
+            useSocket = true;
+            break;
+
         default:
             console.log("Invalid arg");
             process.exit(1);
@@ -46,7 +56,6 @@ if (args.length) {
                 "(--dir=DIRECTORY) to proceed.");
     process.exit(1);
 }
-
 
 /**
  * Express specific stuff
@@ -70,6 +79,15 @@ app.get('/', function (req, res) {
 });
 
 
-http.createServer(app).listen(app.get('port'), function () {
+server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
+
+
+/**
+ * Socket.io
+ */
+
+if (useSocket) {
+    io.listen(server);
+}
