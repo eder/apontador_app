@@ -16,7 +16,7 @@
 
     var genCssAndJsScript = function (jsFile, cssFile) {
         var script =
-            "var d=document; var s;" +
+            "var d=document;var s;" +
             "var h = d.getElementsByTagName('head')[0];";
 
             if (jsFile) {
@@ -44,10 +44,10 @@
     var genLoadScript = function (jsFile, cssFile, socketIoUri) {
 
         var onLoadEventScript = "<script>window.onload = function () {" +
-            genCssAndJsScript() + "};</script>";
+            genCssAndJsScript(jsFile, cssFile) + "};</script>";
 
         return socketIoUri
-            ? onLoadEventScript + genSocketIoScript(socketIoUri)
+            ? onLoadEventScript + genSocketScript(socketIoUri)
             : onLoadEventScript;
     };
 
