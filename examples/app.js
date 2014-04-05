@@ -1,1 +1,1 @@
-console.log("APPJS foi carregado :)");
+console.log("dahora a hsiudashiuasdhiudsah");
