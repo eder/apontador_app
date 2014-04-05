@@ -41,12 +41,8 @@ if (args.length) {
             console.log(staticDir);
             break;
 
-        case '--socket':
-            useSocket = true;
-            break;
-
         case '--watch':
-            watchDir = thisArg[1] || staticDir;
+            useSocket = true;
             watchDir = path.resolve(watchDir);
             console.log('Watching ', watchDir);
             break;

@@ -8,10 +8,12 @@
 
 ## Usage
 
-|    arg    |                        description                        |
-| --------- | --------------------------------------------------------- |
-| --webpage | the webpage which will be proxied to our the local server |
-| --dir     | the directory where your awesome stuff lives (relative)   |
+|    arg    |                        description                         |
+| --------- | ---------------------------------------------------------- |
+| --webpage | the webpage which will be proxied to our the local server  |
+| --dir     | the directory where your awesome stuff lives (relative)    |
+| --watch   | watches the specified *dir* and reloads the page when that |
+|           | happens.                                                   |
 
 
 ## Motivation
