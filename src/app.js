@@ -4,8 +4,6 @@
 /**
  * Serves static pages with the app/css from the localapps.
  * It takes a few cli arguments to configure it well.
- *
- * --webpage : the webpage which will get the full
  */
 
 var http = require('http');
@@ -73,18 +71,24 @@ app.use(express.logger('dev'));
 app.use(express.compress());
 
 /**
- * Proxying logic
+ * Proxying logic. If it takes .css or .js files, don't do a thing, just
+ * stop and send the request to the next middleware - which knows how to
+ * deal greatly with them, otherwise, let the magic happen!
  */
 app.use(function (req, res, next) {
 
     var pl = url.parse(req.url).path.split('/');
     var fileServed = pl[pl.length - 1];
+
     if (fileServed.match(/\.js/) || fileServed.match(/\.css/)) {
         next();
     }
 
     request(webpageUrl, function (err, resp, body) {
-        if (!err && resp.statusCode === 200) {
+
+        if (err || resp.statusCode !== 200) {
+            next(err);
+        } else {
             if (useSocket) {
                 res.end(body +
                         myUtils.genLoadScript('app.js', 'style.css',
@@ -94,9 +98,6 @@ app.use(function (req, res, next) {
                 res.end(body +
                         myUtils.genLoadScript('app.js', 'style.css'));
             }
-
-        } else {
-            next(err);
         }
     });
 });
@@ -114,7 +115,6 @@ server = http.createServer(app).listen(app.get('port'), function () {
 /**
  * Socket.io stuff
  */
-// TODO
 
 if (useSocket) {
     io = require('socket.io').listen(server);
@@ -127,9 +127,6 @@ if (useSocket) {
 function socketsConnectionHandler (socket) {
     if (watchDir) {
         fs.watch(watchDir, function (ev, filename) {
-
-            console.log(ev, filename);
-
             if (ev === 'rename') {
                 // do something if it was just a rename
             } else if (ev === 'change') {

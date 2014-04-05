@@ -1,3 +1,8 @@
+/**
+ * Utils for generating the stuff to be appended to the last part of the
+ * page.
+ */
+
 (function(){
     'use strict';
 
