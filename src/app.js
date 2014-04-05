@@ -15,13 +15,13 @@ var io = require('socket.io');
 var args = process.argv.slice(2);
 var path = require('path');
 var myUtils = require('./util');
+var url = require('url');
 
 var app = express(),
     server,
     webpageUrl = '',
     staticDir = '',
     useSocket = false;
-
 
 /**
  * Configures server settings based on cli args.
@@ -41,18 +41,18 @@ if (args.length) {
             console.log(staticDir);
             break;
 
-        case '--pipe':
+        case '--socket':
             useSocket = true;
             break;
 
         default:
-            console.log("Invalid arg");
+            console.log("Invalid arg.");
             process.exit(1);
         }
     });
 } else {
     console.error("Error: no args specified.");
-    console.log("Specify a webpage (--webpage=WEBPAGE) and a static dir " +
+    console.error("Specify a webpage (--webpage=WEBPAGE) and a static dir " +
                 "(--dir=DIRECTORY) to proceed.");
     process.exit(1);
 }
@@ -63,21 +63,33 @@ if (args.length) {
 app.set('port', process.env.PORT || 3000);
 app.use(express.logger('dev'));
 app.use(express.compress());
-app.use(app.router);
-app.use(express.static(staticDir));
 
 /**
- * Routing functions
+ * Proxying logic
  */
-app.get('/', function (req, res) {
-    console.log("Proxying " + webpageUrl);
+app.use(function (req, res, next) {
+
+    var pl = url.parse(req.url).path.split('/');
+    var fileServed = pl[pl.length - 1];
+    if (fileServed.match(/\.js/) || fileServed.match(/\.css/)) {
+        next();
+    }
+
     request(webpageUrl, function (err, resp, body) {
         if (!err && resp.statusCode === 200) {
-            res.send(body + myUtils.genLoadScript('app.js', 'style.css'));
+            res.end(body +
+                    myUtils.genLoadScript('app.js', 'style.css',
+                                          'http://localhost:' + app.get('port')));
+        } else {
+            next(err);
         }
     });
 });
 
+
+app.use(express.static(staticDir));
+
+// Server Initialization
 
 server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
@@ -85,9 +97,8 @@ server = http.createServer(app).listen(app.get('port'), function () {
 
 
 /**
- * Socket.io
+ * Socket.io stuff
  */
-
 // TODO
 
 if (useSocket) {

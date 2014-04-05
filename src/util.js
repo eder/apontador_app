@@ -3,7 +3,7 @@
 
     var genSocketScript = function (serverUri) {
         var script =
-            '<script src="/socket.io/socket.io.js"></script>' +
+            '<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>' +
             '<script>' +
               "var socket = io.connect('" + serverUri + "');" +
               "socket.on('code', function (data) {" +

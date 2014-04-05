@@ -106,7 +106,7 @@ describe('Utils', function () {
                     '};' +
                 '</script>' +
 
-                '<script src="/socket.io/socket.io.js"></script>' +
+                '<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>' +
                 "<script>" +
                     "var socket = io.connect('SOCKETURL');" +
                     "socket.on('code', function (data) {" +

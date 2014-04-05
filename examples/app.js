@@ -1,0 +1,1 @@
+console.log("APPJS foi carregado :)");
