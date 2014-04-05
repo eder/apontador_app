@@ -5,10 +5,14 @@
         var script =
             '<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>' +
             '<script>' +
-              "var socket = io.connect('" + serverUri + "');" +
-              "socket.on('code', function (data) {" +
-                "eval(data);" +
-              "});" +
+                "var socket = io.connect('" + serverUri + "');" +
+                "socket.on('code', function (data) {" +
+                    "eval(data);" +
+                "});" +
+
+                "socket.on('reload', function (data) {" +
+                    "window.location.reload();" +
+                "})" +
             '</script>';
 
         return script;

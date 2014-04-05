@@ -9,19 +9,21 @@
  */
 
 var http = require('http');
+var path = require('path');
+var url = require('url');
+var fs = require('fs');
 var express = require('express');
 var request = require('request');
-var io = require('socket.io');
-var args = process.argv.slice(2);
-var path = require('path');
 var myUtils = require('./util');
-var url = require('url');
 
 var app = express(),
     server,
     webpageUrl = '',
+    io = null,
     staticDir = '',
-    useSocket = false;
+    watchDir = '',
+    useSocket = false,
+    args = process.argv.slice(2);
 
 /**
  * Configures server settings based on cli args.
@@ -43,6 +45,12 @@ if (args.length) {
 
         case '--socket':
             useSocket = true;
+            break;
+
+        case '--watch':
+            watchDir = thisArg[1] || staticDir;
+            watchDir = path.resolve(watchDir);
+            console.log('Watching ', watchDir);
             break;
 
         default:
@@ -77,9 +85,16 @@ app.use(function (req, res, next) {
 
     request(webpageUrl, function (err, resp, body) {
         if (!err && resp.statusCode === 200) {
-            res.end(body +
-                    myUtils.genLoadScript('app.js', 'style.css',
-                                          'http://localhost:' + app.get('port')));
+            if (useSocket) {
+                res.end(body +
+                        myUtils.genLoadScript('app.js', 'style.css',
+                                              'http://localhost:' +
+                                               app.get('port')));
+            } else {
+                res.end(body +
+                        myUtils.genLoadScript('app.js', 'style.css'));
+            }
+
         } else {
             next(err);
         }
@@ -102,5 +117,24 @@ server = http.createServer(app).listen(app.get('port'), function () {
 // TODO
 
 if (useSocket) {
-    io.listen(server);
+    io = require('socket.io').listen(server);
+    io.sockets.on('connection', socketsConnectionHandler);
 }
+
+/**
+ * Handles the connection of a socket into the sockets.io server.
+ */
+function socketsConnectionHandler (socket) {
+    if (watchDir) {
+        fs.watch(watchDir, function (ev, filename) {
+
+            console.log(ev, filename);
+
+            if (ev === 'rename') {
+                // do something if it was just a rename
+            } else if (ev === 'change') {
+                socket.emit('reload', {data: 'reload the browser'});
+            }
+        });
+    }
+};

@@ -112,6 +112,11 @@ describe('Utils', function () {
                     "socket.on('code', function (data) {" +
                         "eval(data);" +
                     "});" +
+
+                    "socket.on('reload', function (data) {" +
+                        "window.location.reload();" +
+                    "})" +
+
                 "</script>";
 
             assert.equal(actual, expected);
