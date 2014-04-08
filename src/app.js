@@ -38,13 +38,11 @@ if (args.length) {
 
         case '--dir':
             staticDir = path.resolve(thisArg[1]);
-            console.log(staticDir);
             break;
 
         case '--watch':
             useSocket = true;
             watchDir = path.resolve(watchDir);
-            console.log('Watching ', watchDir);
             break;
 
         default:
@@ -73,14 +71,17 @@ app.use(express.compress());
  */
 app.use(function (req, res, next) {
 
-    var pl = url.parse(req.url).path.split('/');
+    var requestUrl = req.url;
+    var pl = url.parse(requestUrl).path.split('/');
     var fileServed = pl[pl.length - 1];
+
 
     if (fileServed.match(/\.js/) || fileServed.match(/\.css/)) {
         next();
+        return;
     }
 
-    request(webpageUrl, function (err, resp, body) {
+    request(url.resolve(webpageUrl, requestUrl), function (err, resp, body) {
 
         if (err || resp.statusCode !== 200) {
             next(err);
@@ -98,8 +99,9 @@ app.use(function (req, res, next) {
     });
 });
 
-
-app.use(express.static(staticDir));
+if (staticDir) {
+    app.use(express.static(staticDir));
+}
 
 // Server Initialization
 
