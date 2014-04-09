@@ -93,14 +93,15 @@ app.use(function (req, res, next) {
                                                app.get('port')));
             } else {
                 res.end(body +
-                        myUtils.genLoadScript('app.js', 'style.css'));
+                        myUtils.genLoadScript(path.join(staticDir, 'app.js'),
+                                              path.join(staticDir, 'style.css')));
             }
         }
     });
 });
 
 if (staticDir) {
-    app.use(express.static(staticDir));
+    app.use(staticDir, express.static(staticDir));
 }
 
 // Server Initialization
