@@ -126,7 +126,6 @@ if (useSocket) {
 function socketsConnectionHandler (socket) {
     if (useSocket) {
         fs.watch(staticDir, function (ev, filename) {
-            console.log(ev, filename);
             if (ev === 'rename') {
                 // do something if it was just a rename
             } else if (ev === 'change') {
