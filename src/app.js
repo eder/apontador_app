@@ -42,7 +42,6 @@ if (args.length) {
 
         case '--watch':
             useSocket = true;
-            watchDir = path.resolve(watchDir);
             break;
 
         default:
@@ -88,7 +87,8 @@ app.use(function (req, res, next) {
         } else {
             if (useSocket) {
                 res.end(body +
-                        myUtils.genLoadScript('app.js', 'style.css',
+                        myUtils.genLoadScript(path.join(staticDir, 'app.js'),
+                                              path.join(staticDir, 'style.css'),
                                               'http://localhost:' +
                                                app.get('port')));
             } else {
@@ -124,8 +124,9 @@ if (useSocket) {
  * Handles the connection of a socket into the sockets.io server.
  */
 function socketsConnectionHandler (socket) {
-    if (watchDir) {
-        fs.watch(watchDir, function (ev, filename) {
+    if (useSocket) {
+        fs.watch(staticDir, function (ev, filename) {
+            console.log(ev, filename);
             if (ev === 'rename') {
                 // do something if it was just a rename
             } else if (ev === 'change') {
