@@ -1,40 +1,66 @@
+/**
+ * Utils for generating the stuff to be appended to the last part of the
+ * page.
+ */
+
 (function(){
     'use strict';
 
-    /**
-     * Generates the script which will get the resources to be injected.
-     * @param  {'string'} jsFile  path to the js file relative to the static
-     *                            dir
-     * @param  {'string'} cssFile path to the css file relative to the
-     *                            static dir
-     * @return {'string'}         the final script.
-     */
-    var genLoadScript = function (jsFile, cssFile) {
+    var genSocketScript = function (serverUri) {
+        var script =
+            '<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>' +
+            '<script>' +
+                "var socket = io.connect('" + serverUri + "');" +
+                "socket.on('code', function (data) {" +
+                    "eval(data);" +
+                "});" +
 
-        var onLoadEventScript =
-            "<script>" +
-                "window.onload = function () {" +
-                    "var d=document," +
-                        "h = d.getElementsByTagName('head')[0]," +
-                        "s = d.createElement('script');" +
+                "socket.on('reload', function (data) {" +
+                    "window.location.reload();" +
+                "})" +
+            '</script>';
 
+        return script;
+    };
+
+    var genCssAndJsScript = function (jsFile, cssFile) {
+        var script =
+            "var d=document;var s;" +
+            "var h = d.getElementsByTagName('head')[0];";
+
+            if (jsFile) {
+                script +=
+                    "s = d.createElement('script');" +
                     "s.type='text/javascript';" +
                     "s.async=true;" +
                     "s.src='" + jsFile + "';" +
-                    "h.appendChild(s);" +
+                    "h.appendChild(s);";
+            }
 
+            if (cssFile) {
+                script +=
                     "s = d.createElement('link');" +
                     "s.href = '" + cssFile + "';" +
                     "s.rel = 'stylesheet';" +
                     "s.type = 'text/css';" +
-                    "h.appendChild(s);" +
-                "};" +
-            "</script>";
+                    "h.appendChild(s);";
+            }
 
-        return onLoadEventScript;
+            return script;
+    }
+
+
+    var genLoadScript = function (jsFile, cssFile, socketIoUri) {
+
+        var onLoadEventScript = "<script>window.onload = function () {" +
+            genCssAndJsScript(jsFile, cssFile) + "};</script>";
+
+        return socketIoUri
+            ? onLoadEventScript + genSocketScript(socketIoUri)
+            : onLoadEventScript;
     };
 
     module.exports = {
-        genLoadScript: genLoadScript
+        genLoadScript: genLoadScript,
     };
 })();
